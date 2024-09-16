@@ -6,6 +6,8 @@ import Pagination from "./common/Pagination";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/ListGroup";
 import _ from "lodash";
+import { Link } from "react-router-dom";
+import SearchBox from "./common/SearchBox";
 
 export default class Movie extends Component {
   state = {
@@ -14,6 +16,7 @@ export default class Movie extends Component {
     isLike: false,
     pageSize: 5,
     currentPage: 1,
+    searchQuery: "",
     currentGenre: "",
     sortColumn: { path: "title", order: "asc" },
   };
@@ -41,7 +44,19 @@ export default class Movie extends Component {
   };
 
   handleGenreChange = (genre) => {
-    this.setState({ currentGenre: genre, currentPage: 1 });
+    this.setState({ currentGenre: genre ,searchQuery:"", currentPage: 1 });
+  };
+
+  handleSearch = (query) => {
+    // let movies = getMovies()
+    // const {value} = event.target
+    // if (value != ''){
+    //   movies = movies.filter((m) => m.title.includes(value))
+    //   if (movies.length == 0)
+    //     movies = [...getMovies()]
+    // }
+    // this.setState({ movies , currentGenre: {_id: ''}});
+    this.setState({searchQuery: query, currentPage: 1})
   };
 
   handleSort = (sortColumn) => {
@@ -55,7 +70,8 @@ export default class Movie extends Component {
       movies: allMovies,
       currentGenre,
       sortColumn,
-    } = this.state;
+      searchQuery,
+    } = this.state;    
 
     let filtered =
       currentGenre && currentGenre._id
@@ -64,6 +80,10 @@ export default class Movie extends Component {
           })
         : allMovies;
 
+    if (searchQuery){
+      filtered = filtered.filter((movie) => {return movie.title.includes(searchQuery)});
+    }
+    
     let sortedMovies = _.orderBy(
       filtered,
       [sortColumn.path],
@@ -75,7 +95,7 @@ export default class Movie extends Component {
 
   render() {
     const { length: count } = this.state.movies;
-    const { pageSize, currentPage, genres, currentGenre, sortColumn } =
+    const { pageSize, currentPage, genres, searchQuery, currentGenre, sortColumn } =
       this.state;
 
     if (count === 0) return <h1>No Moives Found</h1>;
@@ -84,6 +104,16 @@ export default class Movie extends Component {
 
     return (
       <>
+       <div className="row">
+          <div className="col-3">
+          </div>
+          <div className="col-9">
+                <Link to="/movies/new" className="btn btn-primary">
+                    New Movie
+                </Link>
+          </div>
+       </div>
+       <SearchBox value={searchQuery} onChnage={this.handleSearch}/>
         <div className="row">
           <div className="col-3  mt-5">
             <ListGroup

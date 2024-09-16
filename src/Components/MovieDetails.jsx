@@ -1,14 +1,12 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import MovieForm from "./MovieForm";
 
 class MovieDetails extends Component {
   render() {
+    const {props} = this
     return (
       <>
-        <h1>Movie {this.props.match.params.id}</h1>
-        <Link to="/movies" className="btn btn-sm btn-success">
-          save
-        </Link>
+        <MovieForm {...props}/>
       </>
     );
   }
